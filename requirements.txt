@@ -4,3 +4,4 @@ streamlit==1.45.1
 pandas
 sentence_transformers
 sqlalchemy
+sqlalchemy-iris
