@@ -1,7 +1,11 @@
 langchain_community==0.3.24
+langchain_iris
+langchain_huggingface
+langchain
 python-dotenv==1.1.0
 streamlit==1.45.1
 pandas
 sentence_transformers
 sqlalchemy
 sqlalchemy-iris
+urlextract
