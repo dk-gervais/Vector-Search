@@ -1,9 +1,9 @@
-langchain_community==0.3.24
+langchain_community
 langchain_iris
 langchain_huggingface
 langchain
-python-dotenv==1.1.0
-streamlit==1.45.1
+python-dotenv
+streamlit
 pandas
 sentence_transformers
 sqlalchemy
