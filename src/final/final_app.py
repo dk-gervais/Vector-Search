@@ -19,8 +19,8 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 # Load the urlextractor, a module that extracts URLs and will enable us to follow web-links
-# from urlextract import URLExtract
-# extractor = URLExtract()
+from urlextract import URLExtract
+extractor = URLExtract()
 
 # Define the IRIS connection - the username, password, hostname, port, and namespace for the IRIS connection.
 username = os.environ['IRIS_USER']
@@ -34,24 +34,23 @@ CONNECTION_STRING = f"iris://{username}:{password}@{hostname}:{port}/{namespace}
 
 # Create an instance of OpenAIEmbeddings, a class that provides a way to perform vector embeddings using OpenAI's embeddings.
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+llm = ChatOpenAI(
+        temperature=0.0,
+        model_name='gpt-4-turbo',
+    )
 
 # *** Instantiate IRISVector ***
 
 # Define the name of the finance collection in the IRIS vector store.
 FINANCE_COLLECTION_NAME = "financial_tweets"
-
 # Create an instance of IRISVector.
-
 db2 = IRISVector(
     # The embedding function to use for the vector embeddings.
     embedding_function=embeddings,
-
     # The name of the collection in the IRIS vector store.
     collection_name=FINANCE_COLLECTION_NAME,
-
     # The connection string to use for connecting to the IRIS vector store.
     connection_string=CONNECTION_STRING,
-
 )
 
 ### Used to have a starting message in our application
@@ -64,9 +63,16 @@ if "messages" not in st.session_state:
         {"role": "assistant", "content": "Hi, I'm a chatbot that can access your vector stores. What would you like to know?"}
     ]
 
+if "conversation_sum" not in st.session_state:
+    st.session_state["conversation_sum"] = ConversationChain(
+        llm=llm,
+        memory=ConversationSummaryMemory(llm=llm),
+        verbose=True,
+    )
+
 # Add a title for the application
 # This line creates a header in the Streamlit application with the title "GS 2024 Vector Search"
-st.header('InterSystems IRIS Vector Search Tutorial')
+st.header('GS 2024 Vector Search')
 
 # Customize the UI
 # In streamlit we can add settings using the st.sidebar
@@ -96,17 +102,25 @@ if prompt := st.chat_input():
     # Display the user's input in the chat window, escaping any '$' characters
     st.chat_message("user").write(prompt.replace("$", "\$"))
 
-    # Create an instance of the ChatOpenAI class, which is a language model
-    llm = ChatOpenAI(
-        temperature=0,  # Set the temperature for the language model (0 is default)
-        model_name=choose_LM  # Use the selected language model (gpt-3.5-turbo or gpt-4-turbo)
-    )
-
     # Here we respond to the user based on the messages they receive 
     with st.chat_message("assistant"):
-        
+        docs_with_score = db2.similarity_search_with_score(prompt)
+        relevant_docs = ["".join(str(doc.page_content)) + " " for doc, _ in docs_with_score]
+        conversation_history = st.session_state["conversation_sum"].memory.load_memory_variables({})['history']
+        prompt = f"""
+            You should only make use of the provided Relevant Documents. They contain important information
+            belonging to the user, and it is critical that any advice you give is grounded in these documents.
+            If the documents provided are irrelevant to the question, simply state that you do not have the
+            relevant information available in the database.
+            
+            Prompt: {prompt}
+
+            Conversation History: {conversation_history}
+
+            Relevant Documents: {relevant_docs}
+            """
         # Invoke our LLM, passing the user prompt directly to the model
-        resp = llm.invoke(prompt)
+        resp = st.session_state["conversation_sum"].predict(input=prompt)
         
         # Finally, we make sure that if the user didn't put anything or cleared session, we reset the page
         if "messages" not in st.session_state:
@@ -115,7 +129,16 @@ if prompt := st.chat_input():
             ]
 
         # And we add to the session state the message history
-        st.session_state.messages.append({"role": "assistant", "content": resp.content})
+        st.session_state.messages.append({"role": "assistant", "content": resp})
         print(resp)
         # And we also add the response from the AI
-        st.write(resp.content.replace("$", "\$"))
+        st.write(resp.replace("$", "\$"))
+        with st.expander("Supporting Evidence"):
+                for doc, _ in docs_with_score[:1]:
+                    doc_content = "".join(str(doc.page_content))
+                    # st.write(f"""Here are the relevant documents""")
+                    st.write(f"""{doc_content}""")
+                    urls = extractor.find_urls(doc_content)
+                    print(urls)  # prints: ['stackoverflow.com']
+                    for url in urls:
+                        st.page_link(url, label="Source")

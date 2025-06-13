@@ -6,7 +6,7 @@ from langchain_community.llms import OpenAI
 from dotenv import load_dotenv
 load_dotenv(override=True)
 
-st.title("🦜🔗 Quickstart App")
+st.title("InterSystems IRIS Vector Search Tutorial")
 
 def generate_response(input_text):
     llm = OpenAI(temperature=0.7)
