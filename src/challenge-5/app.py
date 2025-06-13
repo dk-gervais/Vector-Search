@@ -7,7 +7,6 @@
 # IRISVector, a class that provides a way to interact with the IRIS vector store.
 import streamlit as st
 from langchain_openai import ChatOpenAI 
-from langchain_community.document_loaders import SeleniumURLLoader
 from langchain.chains import ConversationChain
 from langchain.chains.conversation.memory import ConversationSummaryMemory
 from langchain_huggingface import HuggingFaceEmbeddings
