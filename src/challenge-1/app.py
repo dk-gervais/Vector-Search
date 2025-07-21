@@ -1,5 +1,5 @@
 import streamlit as st
-from langchain_community.llms import OpenAI
+from langchain_openai import OpenAI
 
 # Import dotenv, a module that provides a way to read environment variable files,
 # and load the dotenv (.env) file that provides a few variables we need
