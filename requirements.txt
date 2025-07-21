@@ -1,3 +1,4 @@
+openai
 langchain_community
 langchain_iris
 langchain_huggingface
