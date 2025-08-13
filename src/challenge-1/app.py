@@ -1,5 +1,5 @@
 import streamlit as st
-from langchain_openai import OpenAI
+from langchain_openai import ChatOpenAI
 
 # Import dotenv, a module that provides a way to read environment variable files,
 # and load the dotenv (.env) file that provides a few variables we need
@@ -9,8 +9,8 @@ load_dotenv(override=True)
 st.title("InterSystems IRIS Vector Search Tutorial")
 
 def generate_response(input_text):
-    llm = OpenAI(temperature=0.7)
-    st.info(llm(input_text))
+    llm = ChatOpenAI(temperature=0.7)
+    st.info(llm.invoke(input_text).content)
 
 
 with st.form("my_form"):
