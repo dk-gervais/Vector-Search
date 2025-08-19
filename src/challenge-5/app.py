@@ -22,9 +22,9 @@ from urlextract import URLExtract
 extractor = URLExtract()
 
 # Define the IRIS connection - the username, password, hostname, port, and namespace for the IRIS connection.
-username = os.environ['IRIS_USER']
-password = os.environ['IRIS_PASSWORD']
-hostname = 'localhost'
+username = '_SYSTEM'
+password = 'SYS'
+hostname = 'iris'
 port = 1972
 namespace = 'USER'  # This is the namespace for the IRIS connection
 
@@ -62,13 +62,9 @@ if "messages" not in st.session_state:
         {"role": "assistant", "content": "Hi, I'm a chatbot that can access your vector stores. What would you like to know?"}
     ]
 
-if "conversation_sum" not in st.session_state:
-    st.session_state["conversation_sum"] = ConversationChain(
-        llm=llm,
-        memory=ConversationSummaryMemory(llm=llm),
-        verbose=True,
-    )
+# PASTE CODE SNIPPET 1 HERE vvv
 
+#------------------------------
 # Add a title for the application
 # This line creates a header in the Streamlit application with the title "GS 2024 Vector Search"
 st.header('InterSystems IRIS Vector Search Tutorial')
@@ -103,8 +99,20 @@ if prompt := st.chat_input():
 
     # Here we respond to the user based on the messages they receive 
     with st.chat_message("assistant"):
+        docs_with_score = db2.similarity_search_with_score(prompt)
+        relevant_docs = ["".join(str(doc.page_content)) + " " for doc, _ in docs_with_score]
+        # PASTE CODE SNIPPET 2 HERE vvv
+
+        #------------------------------
+        prompt = f"""
+            Prompt: {prompt}
+
+            Relevant Documents: {relevant_docs}
+            """
         # Invoke our LLM, passing the user prompt directly to the model
+        # REPLACE THIS LINE WITH CODE SNIPPET 3 vvv
         resp = llm.invoke(prompt)
+        #------------------------------
         
         # Finally, we make sure that if the user didn't put anything or cleared session, we reset the page
         if "messages" not in st.session_state:

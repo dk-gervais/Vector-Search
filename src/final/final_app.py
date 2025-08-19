@@ -28,6 +28,13 @@ hostname = 'localhost'
 port = 1972
 namespace = 'USER'  # This is the namespace for the IRIS connection
 
+# NOTE: the above values for username, password, and hostname are example values specifically configured
+# to function in the online learning environment. In order for the app to function locally, you'll need
+# to replace the values with ones specific to your environment. For example:
+# username = os.environ['IRIS_USER']
+# password = os.environ['IRIS_PASSWORD']
+# hostname = 'localhost'
+
 # Create the connection string for the IRIS connection
 CONNECTION_STRING = f"iris://{username}:{password}@{hostname}:{port}/{namespace}"
 

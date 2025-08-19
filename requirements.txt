@@ -1,13 +1,13 @@
-langchain_openai
-langchain_community
-langchain_iris
-langchain_huggingface
-langchain
+langchain_openai == 0.3.30
+langchain_community == 0.3.27
+langchain_iris == 0.2.1
+langchain_huggingface == 0.3.1
+langchain == 0.3.27
 python-dotenv
-streamlit
+streamlit == 1.48.1
 pandas
-jq
-sentence_transformers
-sqlalchemy
-sqlalchemy-iris
-urlextract
+jq == 1.10.0
+sentence_transformers == 5.1.0
+sqlalchemy == 2.0.43
+sqlalchemy-iris == 0.16.0
+urlextract == 1.9.0

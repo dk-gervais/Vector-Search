@@ -18,13 +18,13 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 # Load the urlextractor, a module that extracts URLs and will enable us to follow web-links
-# from urlextract import URLExtract
-# extractor = URLExtract()
+from urlextract import URLExtract
+extractor = URLExtract()
 
 # Define the IRIS connection - the username, password, hostname, port, and namespace for the IRIS connection.
-username = os.environ['IRIS_USER']
-password = os.environ['IRIS_PASSWORD']
-hostname = 'localhost'
+username = '_SYSTEM'
+password = 'SYS'
+hostname = 'iris'
 port = 1972
 namespace = 'USER'  # This is the namespace for the IRIS connection
 
@@ -103,7 +103,12 @@ if prompt := st.chat_input():
 
     # Here we respond to the user based on the messages they receive 
     with st.chat_message("assistant"):
-        
+        # PASTE CODE SNIPPET 1 HERE vvv
+
+        #------------------------------
+        # PASTE CODE SNIPPET 2 HERE vvv
+
+        #------------------------------
         # Invoke our LLM, passing the user prompt directly to the model
         resp = llm.invoke(prompt)
         
@@ -118,3 +123,6 @@ if prompt := st.chat_input():
         print(resp)
         # And we also add the response from the AI
         st.write(resp.content.replace("$", "\$"))
+        ### PASTE CODE SNIPPET 3 HERE vvv
+
+        #------------------------------
